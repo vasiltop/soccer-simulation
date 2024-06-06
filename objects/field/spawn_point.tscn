@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://djmuuha74beku"]
+
+[ext_resource type="Script" path="res://objects/field/spawn_point.gd" id="1_eb44a"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_v6tyn"]
+
+[node name="SpawnPoint" type="Node3D"]
+script = ExtResource("1_eb44a")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_v6tyn")

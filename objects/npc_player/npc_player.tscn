@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://ds5tj6mtvovs1"]
+
+[ext_resource type="Script" path="res://objects/npc_player/npc_player.gd" id="1_50dmb"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vcakj"]
+radius = 0.3
+height = 2.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ykbod"]
+albedo_color = Color(0.306224, 0.309448, 0.541532, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_31hes"]
+material = SubResource("StandardMaterial3D_ykbod")
+radius = 0.3
+height = 2.5
+
+[node name="NpcPlayer" type="CharacterBody3D"]
+collision_mask = 2147483649
+script = ExtResource("1_50dmb")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_vcakj")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_31hes")

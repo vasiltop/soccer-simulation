@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=3 uid="uid://dxlmj4fn0ed1q"]
+
+[ext_resource type="Script" path="res://objects/player/player.gd" id="1_ie2ut"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vhogw"]
+radius = 0.3
+height = 2.5
+
+[node name="Player" type="CharacterBody3D"]
+collision_mask = 2147483648
+script = ExtResource("1_ie2ut")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_vhogw")
+
+[node name="Eye" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.971905, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Eye"]
+
+[node name="Ball" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.694727, -1)
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Line2D" type="Line2D" parent="Control"]
+points = PackedVector2Array(0, 0, 0, -30)
+
+[node name="Control2" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="Line2D" type="Line2D" parent="Control2"]
+position = Vector2(23, 1)
+points = PackedVector2Array(0, 0, 0, -30)
+
+[node name="Audio" type="AudioStreamPlayer3D" parent="."]
+volume_db = -28.806
