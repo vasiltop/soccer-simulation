@@ -1,11 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://djmuuha74beku"]
+[gd_scene load_steps=3 format=3 uid="uid://cuxkrvlynltp6"]
 
-[ext_resource type="Script" path="res://objects/field/spawn_point.gd" id="1_eb44a"]
+[sub_resource type="GDScript" id="GDScript_3hjrf"]
+script/source = "extends Node3D
+
+class_name SpawnPoint
+
+@export var soccer_position: String
+@export var team: int
+"
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_v6tyn"]
 
 [node name="SpawnPoint" type="Node3D"]
-script = ExtResource("1_eb44a")
+script = SubResource("GDScript_3hjrf")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("PlaneMesh_v6tyn")

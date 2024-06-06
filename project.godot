@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="foc"
-run/main_scene="res://levels/game.tscn"
+run/main_scene="res://match/game.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://util/game_manager.gd"
+Error="*res://util/error.gd"
 
 [input]
 

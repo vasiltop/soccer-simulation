@@ -1,42 +1,38 @@
-extends CharacterBody3D
+extends Humanoid
 
 class_name  Player
 
 @onready var camera: Camera3D = $Eye/Camera3D
-@onready var ball: RigidBody3D = get_parent().get_node("Ball")
+@onready var ball: RigidBody3D = get_parent().get_parent().get_node("Ball")
 @onready var original_cam_pos: Vector3 = camera.position
 
 const MIN_KICK_CHARGE: float = 1
 const SENS: float = 0.001
-const GRAVITY: float = 11
-const MAX_WALK_SPEED: float = 300
-const MAX_RUN_SPEED: float = MAX_WALK_SPEED * 2
-const JUMP_FORCE: float = 3.5
+
 const CAMERA_LERP_SPEED: float = 0.08
-const KICK_DELAY: float = 0.8
 const WALK_TIME_AUDIO_DELAY: float  = 0.6
 const RUN_TIME_AUDIO_DELAY: float  = 0.4
 const CAMERA_TILT_INCREMENT = 0.04
 const CAMERA_TILT_ANGLE = 3
 const KICK_CHARGE_INCREMENT: float = 12
 const MAX_KICK_CHARGE: float = 10
-const BALL_KICK_RANGE: float = 2
+
 const SLOW_CAMERA_BOB_SPEED: float = 6
 const FAST_CAMERA_BOB_SPEED: float = 15
 const SLOW_CAMERA_BOB_HEIGHT: float = 5
 const FAST_CAMERA_BOB_HEIGHT: float = 1
 const CAMERA_BOB_LERP_SLEEP: float = 0.01
+const MOUSE_KICK_DIRECTION_MIN_MOVEMENT: float = 3.0
+const MOUSE_KICK_DIRECTION_SPEED: float = 700.0
 
 var current_run_speed: float = 0.0
 var b: Basis = Basis()
 var camera_locked: bool = true
-var kick_direction: Vector3 = Vector3.ZERO
-var kick_timer: float = 0.0
+
 var mouse_kick_direction: Vector3 = Vector3.ZERO
 var camera_bob: float = 0
 var time_since_last_walk_audio: float  = 0
 var camera_height: int = 0
-var kick_charge: float = 1
 
 var walking_sound = preload("res://sounds/walk.mp3")
 
@@ -44,6 +40,7 @@ func _ready():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	
 func _process(delta):
+	super(delta)
 	check_for_camera_switch()
 	set_kick_direction()
 	check_for_restart()
@@ -55,9 +52,7 @@ func _process(delta):
 
 func _physics_process(delta: float):
 	velocity = movement(delta)
-	
-	if not grounded():
-		velocity.y -= GRAVITY * delta
+	apply_gravity(delta)
 	
 	move_and_slide()
 	
@@ -70,16 +65,15 @@ func check_for_camera_switch():
 
 func check_for_restart():
 	if Input.is_action_just_pressed("restart"):
-		get_tree().reload_current_scene()
+		ball.global_position = global_position
+		ball.linear_velocity = Vector3.ZERO
+		ball.linear_damp = 0
 		
 func update_timers(delta: float):
-	kick_timer += delta
 	camera_bob += delta
 	time_since_last_walk_audio += delta
 	
 func apply_camera_tilt():
-
-	
 	var l: bool = Input.is_action_pressed("left")
 	var r: bool = Input.is_action_pressed("right")
 	var multiplier: int = 0
@@ -142,7 +136,7 @@ func draw_charge_bar():
 func check_for_shot_release():
 	if (Input.is_action_just_released("shoot") || Input.is_action_just_released("pass")) and in_ball_kick_range():
 		var height: bool = Input.is_action_just_released("shoot")
-		ball.kicked(self, kick_charge, height)
+		ball.kicked(self, kick_direction, kick_charge, height)
 		kick_timer = 0
 		kick_charge = MIN_KICK_CHARGE
 		
@@ -164,9 +158,6 @@ func set_kick_direction() -> void:
 		var temp_mouse_kick_direction: Vector3 = mouse_kick_direction
 		temp_mouse_kick_direction.x = -temp_mouse_kick_direction.x
 		kick_direction = -temp_mouse_kick_direction.normalized().rotated(Vector3.UP, rotation.y)
-
-func grounded() -> bool:
-	return test_move(global_transform, Vector3(0, -0.01, 0))
 
 func movement(delta: float) -> Vector3:
 	
@@ -192,22 +183,23 @@ func _input(event: InputEvent) -> void:
 			update_mouse_kick_direction(event)
 
 func update_mouse_kick_direction(event: InputEventMouseMotion) -> void:
-	
-	if abs(event.relative.x) > 3.0:
-		mouse_kick_direction.x += event.relatsive.x  / 700.0
+
+	if abs(event.relative.x) > MOUSE_KICK_DIRECTION_MIN_MOVEMENT:
+		mouse_kick_direction.x += event.relative.x  / MOUSE_KICK_DIRECTION_SPEED
 		mouse_kick_direction.x = clamp(mouse_kick_direction.x, -1.0, 1.0)
-	if abs(event.relative.y) > 3.0:
-		mouse_kick_direction.z -= event.relative.y  / 700.0
+		
+	if abs(event.relative.y) > MOUSE_KICK_DIRECTION_MIN_MOVEMENT:
+		mouse_kick_direction.z -= event.relative.y  / MOUSE_KICK_DIRECTION_SPEED
 		mouse_kick_direction.z = clamp(mouse_kick_direction.z, -1.0, 1.0)
 	
 	var line: Line2D = $Control/Line2D
+	#TODO: Change this
 	line.set_point_position(1, Vector2(mouse_kick_direction.normalized().x * 20, -mouse_kick_direction.normalized().z * 20))
 	
 func update_camera_unlocked(event: InputEventMouseMotion) -> void:
 	rotate(Vector3(0, -1, 0), event.relative.x * SENS)
 	camera.rotate_x(-event.relative.y * SENS)
 	camera.rotation.x = clamp(camera.global_rotation.x, deg_to_rad(-90), deg_to_rad(90))
-	
 
 func update_camera_locked() -> void:
 	var target_direction = (ball.global_position - camera.global_position).normalized()
