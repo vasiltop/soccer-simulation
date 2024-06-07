@@ -84,7 +84,7 @@ script = ExtResource("1_uhhds")
 environment = SubResource("Environment_t33yg")
 
 [node name="Ball" parent="." instance=ExtResource("2_ig3tf")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 15.65)
 
 [node name="soccer_field" type="Node3D" parent="."]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.325, 0, 0, 0)
@@ -637,6 +637,9 @@ text = "0 / 0"
 horizontal_alignment = 1
 
 [node name="Spawns" type="Node" parent="."]
+
+[node name="TouchLineX" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, 0, 0)
 
 [node name="GoalLineZ" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.173, 0, -81)

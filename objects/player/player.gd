@@ -3,7 +3,6 @@ extends Humanoid
 class_name  Player
 
 @onready var camera: Camera3D = $Eye/Camera3D
-@onready var ball: RigidBody3D = get_parent().get_parent().get_node("Ball")
 @onready var original_cam_pos: Vector3 = camera.position
 
 const MIN_KICK_CHARGE: float = 1

@@ -7,11 +7,13 @@ class_name Game
 @onready var ball: Ball = $Ball
 @onready var center_ball_position: Vector3 = ball.global_position
 @onready var goal_line_z: float = $GoalLineZ.global_position.z
+@onready var touch_line_x: float = $TouchLineX.global_position.x
 @onready var goal_0: Node3D = $Goal0
 @onready var goal_1: Node3D = $Goal1
 @onready var goals_to_attack: Array[Node3D] = [goal_1, goal_0]
-@onready var teams: Array[Team] = [Team.new(0, 1, self), Team.new(1, -1, self)]
+@onready var teams: Array[Team] = [Team.new(0, -1, self), Team.new(1, 1, self)]
 
+var possession_team: Team = null
 var ball_scene = preload("res://objects/ball/ball.tscn")
 
 enum { WARMUP, LIVE, HALF_TIME, END }
@@ -26,9 +28,7 @@ const length: Dictionary = {
 
 var started: bool = false
 var state: int = WARMUP
-var black_mat = preload("res://materials/black.tres")
-var brown_mat = preload("res://materials/brown.tres")
-var green_mat = preload("res://materials/green.tres")
+
 var score: Array = [0, 0]
 var timer: float = 0
 var half_time_passed: bool = false
@@ -42,6 +42,7 @@ func _input(event):
 		vp.debug_draw = (vp.debug_draw + 1 ) % 6
 
 func _process(delta):
+	
 	update_ui()
 	update_game_state(delta)
 
@@ -104,3 +105,20 @@ func get_ball_landing_pos() -> Vector3:
 	pos.y = 1
 	
 	return pos
+
+func set_possession_team() -> Team:
+	var p0 = teams[0].set_possession_player()
+	var p1 = teams[1].set_possession_player()
+	
+	var blp = get_ball_landing_pos()
+	
+	var closest = closest_from_two(p0, p1, blp)
+	
+	return teams[closest.team]
+	
+func closest_from_two(p0: Humanoid, p1: Humanoid, pos: Vector3) -> Humanoid:
+	
+	var d0 = p0.global_position.distance_to(pos)
+	var d1 = p1.global_position.distance_to(pos)
+	
+	return p0 if d0 < d1 else p1
