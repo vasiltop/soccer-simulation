@@ -12,11 +12,13 @@ func _ready():
 
 func _physics_process(delta):
 	apply_gravity(delta)
-	
+
 	if is_closest():
+
 		kick_direction = get_direction_to_node(get_opposing_net())
 		travel_to_node(delta, ball)
 		try_shoot()
+		
 	move_and_slide()
 
 func try_shoot():

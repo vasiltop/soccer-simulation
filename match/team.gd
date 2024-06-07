@@ -4,20 +4,32 @@ class_name Team
 
 enum { ATTACKING, DEFENDING, WAITING, THROW_IN, FREE_KICK, CORNER_KICK, GOAL_KICK, PENALTY }
 
+const npc_scene = preload("res://objects/npc_player/npc_player.tscn")
 const FIELD_SIZE: float = 81 * 2
+const TEAM_SIZE: int = 1
 
 var game: Game = null
 var players: Array[Humanoid] = []
 var side = 1
+var team_number = 0
 
-func _init(number: int, players: Array[Humanoid], side: int, game: Game):
-	
-	for p in players:
-		if p.team == number:
-			self.players.append(p)
-	
+const player_info = [
+	"st"
+]
+
+func _init(team_number: int, side: int, game: Game):
 	self.side = side
 	self.game = game
+	self.team_number = team_number
+	
+	for i in range(TEAM_SIZE):
+		var inst: Humanoid = npc_scene.instantiate()
+		inst.soccer_position = player_info[i]
+		inst.team = team_number
+		var pos: Vector2 = position_to_vector(inst.soccer_position)
+		inst.global_position = Vector3(pos.x, 1, pos.y * side)
+		game.get_node("Players").add_child(inst)
+		players.append(inst)
 	
 func get_players() -> Array[Humanoid]:
 		return self.players
@@ -27,7 +39,7 @@ func position_to_vector(position: String) -> Vector2:
 	match position:
 		"st": return Vector2(0, 10)
 	
-	Error.throw("Invalid position string.")
+	assert(false, "Invalid position string.")
 	return Vector2.ZERO
 
 func get_state() -> int:

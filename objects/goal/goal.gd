@@ -5,8 +5,6 @@ class_name  Goal
 @onready var area = $Area3D
 @export var team: int
 
-signal goal_scored
-
 var goals_blocked: bool = false
 
 func _ready():
@@ -17,4 +15,3 @@ func goal(ball: Node3D):
 	if not ball is Ball or goals_blocked or game.state != game.LIVE: return
 	goals_blocked = true
 	game.scored(self)
-	

@@ -1,11 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://bashdmhgrpm02"]
+[gd_scene load_steps=18 format=3 uid="uid://bashdmhgrpm02"]
 
 [ext_resource type="PackedScene" uid="uid://dxlmj4fn0ed1q" path="res://objects/player/player.tscn" id="1_0b30x"]
 [ext_resource type="Script" path="res://match/game.gd" id="1_uhhds"]
 [ext_resource type="PackedScene" uid="uid://brt3ugpe006e8" path="res://objects/ball/ball.tscn" id="2_ig3tf"]
 [ext_resource type="Texture2D" uid="uid://bfvfv2p0ccqcj" path="res://models/field/soccer_field_soccer.jpg" id="3_fr2ky"]
 [ext_resource type="Script" path="res://objects/goal/goal.gd" id="5_0bcin"]
-[ext_resource type="PackedScene" uid="uid://ds5tj6mtvovs1" path="res://objects/npc_player/npc_player.tscn" id="6_ic3tv"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_gbffe"]
 
@@ -78,9 +77,8 @@ subdivide_depth = 40
 [sub_resource type="BoxShape3D" id="BoxShape3D_kdpkh"]
 size = Vector3(2.54779, 2.80115, 7.8866)
 
-[node name="Game" type="Node3D" node_paths=PackedStringArray("spawns")]
+[node name="Game" type="Node3D"]
 script = ExtResource("1_uhhds")
-spawns = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_t33yg")
@@ -644,10 +642,6 @@ horizontal_alignment = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.173, 0, -81)
 
 [node name="Players" type="Node" parent="."]
-
-[node name="NpcPlayer" parent="Players" instance=ExtResource("6_ic3tv")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.2525, 3.38425, 1.4531)
-soccer_position = "st"
 
 [node name="Player" parent="Players" instance=ExtResource("1_0b30x")]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4.08518, 2.63795, -9.03885)

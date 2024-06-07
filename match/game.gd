@@ -10,9 +10,9 @@ class_name Game
 @onready var goal_0: Node3D = $Goal0
 @onready var goal_1: Node3D = $Goal1
 @onready var goals_to_attack: Array[Node3D] = [goal_1, goal_0]
-@onready var players: Array[Humanoid] = []
-@onready var teams: Array[Team] = []
-@export var spawns: Array[Node3D]
+@onready var teams: Array[Team] = [Team.new(0, 1, self), Team.new(1, -1, self)]
+
+var ball_scene = preload("res://objects/ball/ball.tscn")
 
 enum { WARMUP, LIVE, HALF_TIME, END }
 
@@ -32,11 +32,15 @@ var green_mat = preload("res://materials/green.tres")
 var score: Array = [0, 0]
 var timer: float = 0
 var half_time_passed: bool = false
-
-func _ready():
-	players.assign(find_children("", "Humanoid", true))
-	teams = [Team.new(0, players, 1, self), Team.new(1, players, -1, self)]
 	
+func _ready():
+	RenderingServer.set_debug_generate_wireframes(true)
+
+func _input(event):
+	if event is InputEventKey and Input.is_key_pressed(KEY_P):
+		var vp = get_viewport()
+		vp.debug_draw = (vp.debug_draw + 1 ) % 6
+
 func _process(delta):
 	update_ui()
 	update_game_state(delta)
@@ -86,4 +90,17 @@ func state_to_string(state: int):
 		LIVE:
 			return "Live"
 
-
+func get_ball_landing_pos() -> Vector3:
+	var gravity = ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)
+	
+	var vel: Vector3 = ball.linear_velocity
+	var pos: Vector3 = ball.global_position
+	var step: float = 0.015
+	
+	while pos.y > 0:
+		vel.y -= gravity * step
+		pos += vel * step
+		
+	pos.y = 1
+	
+	return pos
