@@ -8,6 +8,7 @@ class_name Game
 @onready var center_ball_position: Vector3 = Vector3(1, 0.8, 0)
 @onready var goal_line_z: float = $GoalLineZ.global_position.z
 @onready var touch_line_x: float = $TouchLineX.global_position.x
+@onready var net_length_x: float = $NetLengthX.global_position.x
 @onready var goal_0: Node3D = $Goal0
 @onready var goal_1: Node3D = $Goal1
 @onready var goals_to_attack: Array[Node3D] = [goal_1, goal_0]
@@ -22,13 +23,13 @@ enum { WARMUP, LIVE, HALF_TIME, END }
 const npc_player = preload("res://objects/npc_player/npc_player.tscn")
 const length: Dictionary = {
 	WARMUP: 5,
-	LIVE: 30,
+	LIVE: 100,
 	HALF_TIME: 5,
-	END: 10,
+	END: 5,
 }
 
-var intermediate_timer: float = 5
-const INTERMEDIATE_TIME: float = 5
+var intermediate_timer: float = 1
+const INTERMEDIATE_TIME: float = 1
 
 var started: bool = false
 var state: int = WARMUP
@@ -70,13 +71,15 @@ func update_game_state(delta: float):
 			HALF_TIME:
 				intermediate_timer = 0
 				started = false
+				for team in teams:
+					team.side = team.side * -1
 				reset_field()
 				half_time_passed = true
 				state = LIVE
 			END:
-				state = WARMUP
-				score = [0, 0]
-				reset_field()
+				print("game ended")
+				print(score)
+				get_tree().reload_current_scene()
 			LIVE:
 				state = END if half_time_passed else HALF_TIME
 

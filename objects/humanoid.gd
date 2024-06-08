@@ -54,10 +54,11 @@ func get_opposing_net_position() -> Vector3:
 	return get_opposing_net().global_position
 
 func get_opposing_net() -> Goal:
-	return game.goals_to_attack[team]
+	var o = 0 if get_team().side == 1 else 1
+	return game.goals_to_attack[o]
 	
 func get_own_net() -> Goal:
-	var o = 1 if team == 0 else 0
+	var o = 1 if get_team().side == 1 else 0
 	return game.goals_to_attack[o]
 	
 func get_ball_distance():

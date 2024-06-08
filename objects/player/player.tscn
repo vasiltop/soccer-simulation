@@ -17,6 +17,7 @@ shape = SubResource("CapsuleShape3D_vhogw")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.971905, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Eye"]
+current = true
 
 [node name="Ball" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.694727, -1)

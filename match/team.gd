@@ -6,7 +6,7 @@ enum { ATTACKING, DEFENDING, WAITING, THROW_IN, FREE_KICK, CORNER_KICK, GOAL_KIC
 
 const npc_scene = preload("res://objects/npc_player/npc_player.tscn")
 const FIELD_SIZE: float = 81 * 2
-const TEAM_SIZE: int = 10
+const TEAM_SIZE: int = 11
 
 var game: Game = null
 var players: Array[Humanoid] = []
@@ -18,14 +18,14 @@ const player_info = [
 	"rw",
 	"lw",
 	"st",
-	"rcm",
-	"lcm",
+	"cm",
 	"rm",
 	"lm",
 	"rcb",
 	"lcb",
 	"rb",
-	"lb"
+	"lb",
+	"gk"
 ]
 
 func _init(team_number: int, side: int, game: Game):
@@ -58,13 +58,15 @@ func position_to_vector(position: String) -> Vector2:
 		"lw": return Vector2(-25, 15)
 		"rcm": return Vector2(5, 35)
 		"lcm": return Vector2(-5, 35)
+		"cm": return Vector2(0, 35)
 		"rm": return Vector2(15, 35)
 		"lm": return Vector2(-15, 35)
 		"rcb": return Vector2(5, 55)
 		"lcb": return Vector2(-5, 55)
 		"rb": return Vector2(15, 55)
 		"lb": return Vector2(-15, 55)
-	1
+		"gk": return Vector2(0, 76)
+	
 	assert(false, "Invalid position string.")
 	return Vector2.ZERO
 
