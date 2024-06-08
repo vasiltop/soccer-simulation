@@ -13,8 +13,9 @@ class_name Game
 @onready var goal_1: Node3D = $Goal1
 @onready var goals_to_attack: Array[Node3D] = [goal_1, goal_0]
 
-@onready var teams: Array[Team] = [Team.new(0, 1, self, "st"), Team.new(1, -1, self)]
+@onready var teams: Array[Team] = [Team.new(0, 1, self, "rw"), Team.new(1, -1, self)]
 
+var scored_on_last: int = 0
 var possession_team: Team = null
 var ball_scene = preload("res://objects/ball/ball.tscn")
 
@@ -77,8 +78,7 @@ func update_game_state(delta: float):
 				half_time_passed = true
 				state = LIVE
 			END:
-				print("game ended")
-				print(score)
+
 				get_tree().reload_current_scene()
 			LIVE:
 				state = END if half_time_passed else HALF_TIME
@@ -95,8 +95,13 @@ func reset_field():
 	for team in teams:
 		team.reset_players()
 		
-	get_team_on_side_one().players.pick_random().global_position = get_center_pos()
-		
+	
+	if scored_on_last == 0:
+		get_team_on_side_one().players.pick_random().global_position = get_center_pos()
+	elif scored_on_last == 1:
+		get_team_on_side_one().players.pick_random().global_position = get_center_pos()
+	else:
+		get_team_on_side_neg_one().players.pick_random().global_position = get_center_pos()
 	
 	ball.global_position = center_ball_position
 	ball.linear_velocity = Vector3.ZERO
@@ -105,8 +110,17 @@ func reset_field():
 func get_team_on_side_one() -> Team:
 	return teams[0] if teams[0].side == 1 else teams[1]
 
+func get_team_on_side_neg_one() -> Team:
+	return teams[0] if teams[0].side == -1 else teams[1]
+	
 func scored(goal: Goal):
-	score[goal.team] += 1
+	if goal.team == 0:
+		score[get_team_on_side_one().team_number] += 1
+		scored_on_last = 1
+	else:
+		score[get_team_on_side_neg_one().team_number] += 1
+		scored_on_last = -1
+
 	reset_field()
 	goal.goals_blocked = false
 

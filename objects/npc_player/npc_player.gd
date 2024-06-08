@@ -169,8 +169,6 @@ func is_direction_to_opposing_net_blocked() -> bool:
 
 func attack(delta: float):
 	if get_team().set_possession_player() == self:
-		var mi: MeshInstance3D = get_node("MeshInstance3D")
-		mi.set_surface_override_material(0, green_mat)
 		try_shoot()
 		
 		var closest: Humanoid = get_closest_opponent()
