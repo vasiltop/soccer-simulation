@@ -5,6 +5,8 @@ class_name Team
 enum { ATTACKING, DEFENDING, WAITING, THROW_IN, FREE_KICK, CORNER_KICK, GOAL_KICK, PENALTY }
 
 const npc_scene = preload("res://objects/npc_player/npc_player.tscn")
+const player_scene = preload("res://objects/player/player.tscn")
+
 const FIELD_SIZE: float = 81 * 2
 const TEAM_SIZE: int = 11
 
@@ -28,13 +30,17 @@ const player_info = [
 	"gk"
 ]
 
-func _init(team_number: int, side: int, game: Game):
+func _init(team_number: int, side: int, game: Game, player_pos = "None"):
 	self.side = side
 	self.game = game
 	self.team_number = team_number
 
 	for i in range(TEAM_SIZE):
-		var inst: Humanoid = npc_scene.instantiate()
+		var scene = npc_scene
+		if player_info[i] == player_pos:
+			scene = player_scene
+		
+		var inst: Humanoid = scene.instantiate()
 		inst.soccer_position = player_info[i]
 		inst.team = team_number
 		var pos: Vector2 = position_to_vector(inst.soccer_position)

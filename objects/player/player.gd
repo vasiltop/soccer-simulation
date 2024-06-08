@@ -3,6 +3,7 @@ extends Humanoid
 class_name  Player
 
 @onready var camera: Camera3D = $Eye/Camera3D
+
 @onready var original_cam_pos: Vector3 = camera.position
 
 const MIN_KICK_CHARGE: float = 1
@@ -50,14 +51,16 @@ func _process(delta):
 	apply_camera_tilt()
 
 func _physics_process(delta: float):
+	if camera_locked:
+		update_camera_locked()
+		
+	if not game.started: return
+	
 	velocity = movement(delta)
 	apply_gravity(delta)
 	
 	move_and_slide()
 	
-	if camera_locked:
-		update_camera_locked()
-		
 func check_for_camera_switch():
 	if Input.is_action_just_pressed("switch_movement") and grounded():
 		camera_locked = not camera_locked

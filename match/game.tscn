@@ -1,6 +1,5 @@
-[gd_scene load_steps=18 format=3 uid="uid://bashdmhgrpm02"]
+[gd_scene load_steps=17 format=3 uid="uid://bashdmhgrpm02"]
 
-[ext_resource type="PackedScene" uid="uid://dxlmj4fn0ed1q" path="res://objects/player/player.tscn" id="1_0b30x"]
 [ext_resource type="Script" path="res://match/game.gd" id="1_uhhds"]
 [ext_resource type="PackedScene" uid="uid://brt3ugpe006e8" path="res://objects/ball/ball.tscn" id="2_ig3tf"]
 [ext_resource type="Texture2D" uid="uid://bfvfv2p0ccqcj" path="res://models/field/soccer_field_soccer.jpg" id="3_fr2ky"]
@@ -648,9 +647,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.173, 0, -81)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.85232, 0, 80.4787)
 
 [node name="Players" type="Node" parent="."]
-
-[node name="Player" parent="Players" instance=ExtResource("1_0b30x")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.08135, 72.0769)
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
 use_collision = true
