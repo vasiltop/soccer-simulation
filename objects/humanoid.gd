@@ -34,7 +34,7 @@ func _process(delta):
 
 func stop_stun():
 	if stunned:
-		await get_tree().create_timer(1).timeout
+		await get_tree().create_timer(0.4).timeout
 		stunned = false
 		
 func get_team() -> Team:

@@ -647,7 +647,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.173, 0, -81)
 [node name="Players" type="Node" parent="."]
 
 [node name="Player" parent="Players" instance=ExtResource("1_0b30x")]
-transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4.08518, 2.63795, -9.03885)
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 4.99633, 2.63795, 21.3633)
 soccer_position = "rb"
 
 [node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]

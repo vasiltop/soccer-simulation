@@ -8,7 +8,7 @@ class_name Ball
 const DRIBBLE_FORCE: float = 7
 const KICK_FORCE: float = 5
 const VELOCITY_BALL_FORCE_SLOWDOWN: float = 5.0
-const SHOT_HEIGHT: float = 4.0
+const SHOT_HEIGHT: float = 6.0
 const PASS_HEIGHT: float = 30.0
 const MIN_VELOCITY_AFFECT: float = 0.6
 

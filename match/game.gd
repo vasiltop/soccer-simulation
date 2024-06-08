@@ -5,7 +5,7 @@ class_name Game
 @onready var timer_label: Label = $Timer
 @onready var score_label: Label = $Score
 @onready var ball: Ball = $Ball
-@onready var center_ball_position: Vector3 = ball.global_position
+@onready var center_ball_position: Vector3 = Vector3(1, 0.8, 0)
 @onready var goal_line_z: float = $GoalLineZ.global_position.z
 @onready var touch_line_x: float = $TouchLineX.global_position.x
 @onready var goal_0: Node3D = $Goal0
@@ -21,11 +21,14 @@ enum { WARMUP, LIVE, HALF_TIME, END }
 
 const npc_player = preload("res://objects/npc_player/npc_player.tscn")
 const length: Dictionary = {
-	WARMUP: 1000,
-	LIVE: 300,
+	WARMUP: 5,
+	LIVE: 30,
 	HALF_TIME: 5,
 	END: 10,
 }
+
+var intermediate_timer: float = 5
+const INTERMEDIATE_TIME: float = 5
 
 var started: bool = false
 var state: int = WARMUP
@@ -36,6 +39,9 @@ var half_time_passed: bool = false
 	
 func _ready():
 	RenderingServer.set_debug_generate_wireframes(true)
+
+func get_center_pos():
+	return Vector3(0, 2, 0)
 
 func _input(event):
 	if event is InputEventKey and Input.is_key_pressed(KEY_P):
@@ -48,14 +54,23 @@ func _process(delta):
 	update_game_state(delta)
 
 func update_game_state(delta: float):
-	timer += delta
+	if intermediate_timer > INTERMEDIATE_TIME:
+		timer += delta
+		started = true
+		
+	intermediate_timer += delta
 	
 	if timer > length[state]:
 		match state:
 			WARMUP:
+				intermediate_timer = 0
+				started = false
 				state = LIVE
 				reset_field()
 			HALF_TIME:
+				intermediate_timer = 0
+				started = false
+				reset_field()
 				half_time_passed = true
 				state = LIVE
 			END:
@@ -72,9 +87,20 @@ func update_ui():
 	score_label.text = "%d / %d" % [score[0], score[1]]
 	
 func reset_field():
+	started = false
+	
+	for team in teams:
+		team.reset_players()
+		
+	get_team_on_side_one().players.pick_random().global_position = get_center_pos()
+		
+	
 	ball.global_position = center_ball_position
 	ball.linear_velocity = Vector3.ZERO
 	ball.angular_velocity = Vector3.ZERO
+
+func get_team_on_side_one() -> Team:
+	return teams[0] if teams[0].side == 1 else teams[1]
 
 func scored(goal: Goal):
 	score[goal.team] += 1
