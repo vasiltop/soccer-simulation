@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="foc"
+config/name="soccer-simulation"
 run/main_scene="res://match/game.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
