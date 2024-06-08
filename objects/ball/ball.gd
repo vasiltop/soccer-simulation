@@ -5,7 +5,7 @@ class_name Ball
 @onready var audio_player = $Audio
 @onready var collider = $Area3D
 
-const DRIBBLE_FORCE: float = 7.5
+const DRIBBLE_FORCE: float = 7
 const KICK_FORCE: float = 5
 const VELOCITY_BALL_FORCE_SLOWDOWN: float = 5.0
 const SHOT_HEIGHT: float = 4.0

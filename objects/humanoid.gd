@@ -22,7 +22,7 @@ var marked_by: Humanoid = null
 var stunned: bool = false
 
 func grounded() -> bool:
-	return test_move(global_transform, Vector3(0, -0.01, 0))
+	return test_move(global_transform, Vector3(0, -0.04, 0))
 	
 func apply_gravity(delta: float):
 	if not grounded():

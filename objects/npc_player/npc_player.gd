@@ -2,12 +2,20 @@ extends Humanoid
 
 class_name NpcPlayer
 
-const SHOOT_DISTANCE = 30
+const SHOOT_DISTANCE = 40
 const TACKLE_DISTANCE = 3
+const STOP_DRIBBLE_RANGE = 13
+const ZONE_DISTANCE = 30
+const BALL_DIRECT_FOLLOW_DISTANCE = 8
 
 var black_mat = preload("res://materials/black.tres")
 var brown_mat = preload("res://materials/brown.tres")
 var green_mat = preload("res://materials/green.tres")
+
+# TODO: make the state switching less instant
+# TODO: make the players not give up on the ball
+# TODO: make the players avoid each other
+# TODO: fix the bug where they avoid the ball
 
 func _ready():
 	
@@ -17,12 +25,14 @@ func _process(delta):
 	super(delta)
 
 func _physics_process(delta):
-	if stunned: return
 	var mi: MeshInstance3D = get_node("MeshInstance3D")
+		
 	if get_team().team_number == 1:
 		mi.set_surface_override_material(0, black_mat)
 	else:
 		mi.set_surface_override_material(0, brown_mat)
+			
+	if stunned: return
 	apply_gravity(delta)
 	
 	match get_team_state():
@@ -32,16 +42,21 @@ func _physics_process(delta):
 	move_and_slide()
 
 func defend(delta: float):
-	var mark: Humanoid = get_man_to_mark()
-	if mark.get_team().set_possession_player() == mark:
-		travel_to_node(delta, mark)
-		try_tackle(mark)
-	else:
-		mark_player(delta, mark)
+	print("Team %d is defending" % get_team().team_number)
+	print("team 0 is brown team 1 is black")
+	var defense_pos: Vector2 = get_team().position_to_vector(soccer_position) * get_team().side
+	var vec3_pos = Vector3(defense_pos.x, 1, defense_pos.y)
 	
-	mark.marked_by = null
+	var co = get_closest_opponent()
+	if vec3_pos.distance_to(global_position) < ZONE_DISTANCE and co.global_position.distance_to(vec3_pos) < ZONE_DISTANCE and get_other_team().set_possession_player() == co:
+		travel_to_node(delta, co)
+		try_tackle(co)
+	else:
+		#TODO: make this better
+		travel_to_position(delta, vec3_pos)
 
 func mark_player(delta: float, mark: Humanoid):
+	
 	var n = get_own_net()
 	var dir = get_direction_to_node(n)
 	travel_to_position(delta, mark.global_position + dir * 3)
@@ -80,75 +95,94 @@ class PositionalWeight:
 	
 	var positions: Array[Vector3] = []
 	var player: Humanoid = null
+	var touch_line_x: float = 41
+	var goal_line_z: float = 81
 	
 	func _init(positions: Array[Vector3], player: Humanoid):
 		self.positions = positions
 		self.player = player
+		self.touch_line_x = abs(player.game.touch_line_x)
+		self.goal_line_z = abs(player.game.goal_line_z)
 	
-	func get_most_favorable_index_with_possession() -> int:
+	func get_most_favorable_pass_index() -> int:
+		
 		var weights: Array[float] = []
 		
 		for p in self.positions:
 			var distance_to_closest_opponent: float = player.get_other_team().get_closest_player_to_position(p).global_position.distance_to(p)
 			var distance_to_goal: float = player.get_opposing_net().global_position.distance_to(p)
-			var distance_to_touch_line: float = abs(player.game.touch_line_x) - abs(p.x)
-			var distane_to_cloest_teammate: float = player.get_team().get_closest_player_to_position(p).global_position.distance_to(p)
-			weights.append(-distance_to_closest_opponent - distance_to_goal - distance_to_touch_line- distane_to_cloest_teammate)
 			
-		
+			
+			# we want it to be as close to the goal
+			# and far from an enemy player, but we dont care too much about this
+			weights.append(-distance_to_goal + distance_to_closest_opponent / 4)
+
 		return Util.get_max_index(weights)
 		
 	func get_most_favorable_index_without_possession() -> int:
 		var weights: Array[float] = []
 		
 		for p in self.positions:
-			var distance_to_closest_opponent: float = player.get_other_team().get_closest_player_to_position(p).global_position.distance_to(p)
-			var distane_to_cloest_teammate: float = player.get_team().get_closest_player_to_position(p).global_position.distance_to(p)
-			var distance_to_ball: float = player.ball.global_position.distance_to(p)
-			var pos = player.get_team().position_to_vector(player.soccer_position)
-			var distance_to_position_x: float = ((pos.x * player.get_team().side) - p.x) * 500
+			var distance_to_closest_opponent: float = player.get_other_team().get_closest_player_to_position(p).global_position.distance_to(player.global_position + p)
+			var distane_to_closest_teammate: float = player.get_team().get_closest_player_to_position(p).global_position.distance_to(player.global_position + p)
 			
-			weights.append(-distance_to_closest_opponent - distance_to_ball - distance_to_position_x - distane_to_cloest_teammate)
+			weights.append(-distance_to_closest_opponent)
 			
 		return Util.get_max_index(weights)
 
-
 func attack(delta: float):
 	if get_team().set_possession_player() == self:
-		if can_kick():
-			var closest: Humanoid = get_closest_opponent()
+		var mi: MeshInstance3D = get_node("MeshInstance3D")
+		mi.set_surface_override_material(0, green_mat)
+		try_shoot()
+		
+		var closest: Humanoid = get_closest_opponent()
+		
+		if get_distance_to_node(closest) < STOP_DRIBBLE_RANGE:
 			var available_passes: Array[Humanoid] = get_available_passes()
-			
 			var positions: Array[Vector3] = []
+			
 			for p in available_passes:
 				positions.append(p.global_position)
-			
-			positions.append(get_relative_position(closest.global_position, Vector3.RIGHT))
-			positions.append(get_relative_position(closest.global_position, Vector3.LEFT))
-			positions.append(get_direction_to_node(get_opposing_net()))
-			
+				
+			if len(positions) == 0:
+				positions.append(get_direction_to_node(get_opposing_net()))
+				
 			var pw = PositionalWeight.new(positions, self)
-			var i = pw.get_most_favorable_index_with_possession()
+			var i = pw.get_most_favorable_pass_index()
 			
 			if i < len(available_passes):
 				pass_to_position(positions[i])
-			else:
+			elif get_ball_distance() < BALL_DIRECT_FOLLOW_DISTANCE:
 				kick_direction = get_direction_to_position(positions[i])
 				travel_to_node(delta, ball)
+			else:
+				travel_to_position(delta, game.get_ball_landing_pos())
 		else:
-			travel_to_position(delta, game.get_ball_landing_pos())
+			if get_ball_distance() < BALL_DIRECT_FOLLOW_DISTANCE:
+				kick_direction = get_direction_to_node(get_opposing_net())
+				travel_to_node(delta, ball)
+			else:
+				travel_to_position(delta, game.get_ball_landing_pos())
 	else:
+		var pos = get_team().position_to_vector(soccer_position) * get_team().side
+		var vec3pos = Vector3(pos.x, 1, pos.y)
+		var pos_on_other_half = vec3pos + Vector3(0, 0, abs(get_team().game.goal_line_z) / 2 * get_other_team().side)
 		
-		var positions: Array[Vector3] = []
-		#positions.append(global_position + get_direction_to_node(get_team().set_possession_player()))
-		positions.append(global_position + Vector3(0, 0, 5 * get_team().side))
-		positions.append(global_position + Vector3(5, 0, 0))
-		positions.append(global_position + Vector3(-5, 0, 0))
-		positions.append(global_position + Vector3(0, 0, 2 * get_team().side * -1))
-		
-		var pw = PositionalWeight.new(positions, self)
-		var i = pw.get_most_favorable_index_without_possession()
-		travel_to_position(delta, positions[i])
+		if pos_on_other_half.distance_to(global_position) < ZONE_DISTANCE:
+			travel_to_position(delta, pos_on_other_half)
+		else:
+			var p: Humanoid = get_team().set_possession_player() 
+			
+			var positions: Array[Vector3] = []
+			
+			positions.append(global_position + Vector3(0, 0, 10 * get_other_team().side))
+			positions.append(global_position + Vector3(0, 0, 4 * get_team().side))
+			positions.append(global_position + get_direction_to_node(p) * 4)
+			
+			var pw = PositionalWeight.new(positions, self)
+			var i = pw.get_most_favorable_index_without_possession()
+			travel_to_position(delta, positions[i])
 
 func get_relative_position(to: Vector3, direction: Vector3):
 	var relative_direction = (to - global_position).normalized()

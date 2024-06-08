@@ -11,7 +11,8 @@ class_name Game
 @onready var goal_0: Node3D = $Goal0
 @onready var goal_1: Node3D = $Goal1
 @onready var goals_to_attack: Array[Node3D] = [goal_1, goal_0]
-@onready var teams: Array[Team] = [Team.new(0, -1, self), Team.new(1, 1, self)]
+
+@onready var teams: Array[Team] = [Team.new(0, 1, self), Team.new(1, -1, self)]
 
 var possession_team: Team = null
 var ball_scene = preload("res://objects/ball/ball.tscn")

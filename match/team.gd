@@ -49,17 +49,17 @@ func position_to_vector(position: String) -> Vector2:
 
 	match position:
 		"st": return Vector2(0, 15)
-		"rw": return Vector2(-25, 15)
-		"lw": return Vector2(25, 15)
-		"rcm": return Vector2(-15, 35)
-		"lcm": return Vector2(15, 35)
-		"rm": return Vector2(-25, 35)
-		"lm": return Vector2(25, 35)
-		"rcb": return Vector2(-15, 55)
-		"lcb": return Vector2(15, 55)
-		"rb": return Vector2(-25, 55)
-		"lb": return Vector2(25, 55)
-	
+		"rw": return Vector2(25, 15)
+		"lw": return Vector2(-25, 15)
+		"rcm": return Vector2(15, 35)
+		"lcm": return Vector2(-15, 35)
+		"rm": return Vector2(25, 35)
+		"lm": return Vector2(-25, 35)
+		"rcb": return Vector2(15, 55)
+		"lcb": return Vector2(-15, 55)
+		"rb": return Vector2(25, 55)
+		"lb": return Vector2(-25, 55)
+	1
 	assert(false, "Invalid position string.")
 	return Vector2.ZERO
 
