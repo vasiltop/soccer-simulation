@@ -3,7 +3,7 @@ class_name  Goal
 
 @onready var game = get_parent()
 @onready var area = $Area3D
-@export var team: int
+@export var side: int
 
 var goals_blocked: bool = false
 

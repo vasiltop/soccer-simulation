@@ -35,7 +35,6 @@ func dribble(player: Humanoid):
 	linear_velocity = dir * DRIBBLE_FORCE * player.velocity.length() / VELOCITY_BALL_FORCE_SLOWDOWN
 
 func kicked(body: Humanoid, direction: Vector3, force: float, height = false):
-	print("kick")
 	if body.kick_timer < body.KICK_DELAY: return
 
 	

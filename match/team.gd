@@ -8,7 +8,7 @@ const npc_scene = preload("res://objects/npc_player/npc_player.tscn")
 const player_scene = preload("res://objects/player/player.tscn")
 
 const FIELD_SIZE: float = 81 * 2
-const TEAM_SIZE: int = 1
+const TEAM_SIZE: int = 11
 
 var game: Game = null
 var players: Array[Humanoid] = []

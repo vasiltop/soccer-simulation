@@ -103,6 +103,7 @@ shape = SubResource("BoxShape3D_e8yrm")
 [node name="Goal0" type="Node3D" parent="."]
 transform = Transform3D(-6.55671e-08, 0, -1.5, 0, 1.5, 0, 1.5, 0, -6.55671e-08, 0.618536, 0.851491, 85.4951)
 script = ExtResource("5_0bcin")
+side = 1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Goal0"]
 collision_layer = 2147483648
@@ -358,7 +359,7 @@ shape = SubResource("BoxShape3D_kdpkh")
 [node name="Goal1" type="Node3D" parent="."]
 transform = Transform3D(-6.55671e-08, 0, 1.5, 0, 1.5, 0, -1.5, 0, -6.55671e-08, 1.49756, 0.851491, -85.7844)
 script = ExtResource("5_0bcin")
-team = 1
+side = -1
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Goal1"]
 collision_layer = 2147483648
@@ -681,6 +682,3 @@ size = Vector3(1, 11.5825, 65.1071)
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -37.5022, 6.31569, -80.8491)
 use_collision = true
 size = Vector3(1, 11.5825, 65.1071)
-
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(-3.09086e-08, 0.707107, -0.707107, 3.09086e-08, 0.707107, 0.707107, 1, 1.77636e-15, -4.37114e-08, -69.8269, 67.5438, 0)

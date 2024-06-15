@@ -121,7 +121,7 @@ func handle_shooting(delta):
 		kick_charge = MIN_KICK_CHARGE
 		
 	check_for_shot_release()
-	draw_charge_bar()
+	#draw_charge_bar()
 	charge_shot_bar(delta)
 
 func charge_shot_bar(delta: float):
@@ -194,9 +194,9 @@ func update_mouse_kick_direction(event: InputEventMouseMotion) -> void:
 		mouse_kick_direction.z -= event.relative.y  / MOUSE_KICK_DIRECTION_SPEED
 		mouse_kick_direction.z = clamp(mouse_kick_direction.z, -1.0, 1.0)
 	
-	var line: Line2D = $Control/Line2D
+	#var line: Line2D = $Control/Line2D
 	#TODO: Change this
-	line.set_point_position(1, Vector2(mouse_kick_direction.normalized().x * 20, -mouse_kick_direction.normalized().z * 20))
+	#line.set_point_position(1, Vector2(mouse_kick_direction.normalized().x * 20, -mouse_kick_direction.normalized().z * 20))
 	
 func update_camera_unlocked(event: InputEventMouseMotion) -> void:
 	rotate(Vector3(0, -1, 0), event.relative.x * SENS)

@@ -30,7 +30,7 @@ func _physics_process(delta):
 		mi.set_surface_override_material(0, black_mat)
 	else:
 		mi.set_surface_override_material(0, brown_mat)
-	
+
 	apply_gravity(delta)
 	if stunned: return
 	if not game.started: return
@@ -146,47 +146,47 @@ class PositionalWeight:
 		for p in self.positions:
 			var distance_to_closest_opponent: float = player.get_other_team().get_closest_player_to_position(p).global_position.distance_to(player.global_position + p)
 			var distane_to_closest_teammate: float = player.get_team().get_closest_player_to_position(p).global_position.distance_to(player.global_position + p)
-			
+
 			weights.append(-distance_to_closest_opponent)
-			
+
 		return Util.get_max_index(weights)
 
 func is_direction_to_opposing_net_blocked() -> bool:
 	var c = get_other_team().get_closest_player_to_position(global_position)
-	
+
 	var dir = get_direction_to_node(get_opposing_net())
-	
+
 	dir = dir.rotated(Vector3.UP, deg_to_rad(-20))
-	
+
 	for i in range(8):
 		dir = dir.rotated(Vector3.UP, deg_to_rad(5))
 		var r = raycast(global_position, global_position + dir * 10)
-		
+
 		if r != null and r is Humanoid:
 			return true
-	
+
 	return false
 
 func attack(delta: float):
 	if get_team().set_possession_player() == self:
 		try_shoot()
-		
+
 		var closest: Humanoid = get_closest_opponent()
-		
+
 		if get_distance_to_node(closest) < STOP_DRIBBLE_RANGE and is_direction_to_opposing_net_blocked():
-			
+
 			var available_passes: Array[Humanoid] = get_available_passes()
 			var positions: Array[Vector3] = []
-			
+
 			for p in available_passes:
 				positions.append(p.global_position)
-				
+
 			if len(positions) == 0:
 				positions.append(get_direction_to_node(get_opposing_net()))
-				
+
 			var pw = PositionalWeight.new(positions, self)
 			var i = pw.get_most_favorable_pass_index()
-			
+
 			if i < len(available_passes) and pass_timer > TIME_UNTIL_PASS:
 				pass_timer = 0
 				pass_to_position(positions[i])
